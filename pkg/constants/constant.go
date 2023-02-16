@@ -23,7 +23,7 @@ const (
 	UserTableName     = "user"
 	FavoriteTableName = "favorite"
 	CommentTableName  = "comment"
-	ReltaionTableName = "relation"
+	RelationTableName = "relation"
 
 	//jwt
 	SecretKey   = "secret key"
