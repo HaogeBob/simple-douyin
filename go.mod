@@ -1,6 +1,8 @@
 module github.com/simple/douyin
 
-go 1.18
+go 1.19
+
+replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.8.0
