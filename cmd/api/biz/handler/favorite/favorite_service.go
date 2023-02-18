@@ -6,8 +6,9 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	favorite "github.com/simple/douyin/biz/model/favorite"
+	"github.com/simple/douyin/pkg/constants"
+	"github.com/simple/douyin/pkg/errno"
 )
 
 // FavoriteAction .
@@ -17,13 +18,16 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 	var req favorite.FavoriteActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	err = rpc.FavoriteAction(context.Background())
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
 
-	resp := new(favorite.FavoriteActionResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	SendResponse(c, errno.Success, nil)
 }
 
 // FavoriteList .
@@ -33,11 +37,14 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	var req favorite.FavoriteListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-
-	resp := new(favorite.FavoriteListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	v, _ := c.Get(constants.IdentityKey)
+	err = rpc.FavoriteList(context.Background())
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	SendResponse(c, errno.Success, nil)
 }
