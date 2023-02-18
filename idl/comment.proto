@@ -27,7 +27,9 @@ message Comment {
 message create_comment_request {
     string token = 1;//用户鉴权token
     int64 video_id = 2;//视频id
-    string comment_text = 3;////用户填写的评论内容
+    int32 action_type = 3;
+    string comment_text = 4;//用户填写的评论内容
+    int64 comment_id = 5;
 }
 
 message create_comment_response {

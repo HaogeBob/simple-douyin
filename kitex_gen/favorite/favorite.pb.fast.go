@@ -224,6 +224,11 @@ func (x *Video) fastReadField8(buf []byte, _type int8) (offset int, err error) {
 
 func (x *FavoriteActionRequest) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	case 2:
 		offset, err = x.fastReadField2(buf, _type)
 		if err != nil {
@@ -231,11 +236,6 @@ func (x *FavoriteActionRequest) FastRead(buf []byte, _type int8, number int32) (
 		}
 	case 3:
 		offset, err = x.fastReadField3(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 4:
-		offset, err = x.fastReadField4(buf, _type)
 		if err != nil {
 			goto ReadFieldError
 		}
@@ -252,17 +252,17 @@ ReadFieldError:
 	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_FavoriteActionRequest[number], err)
 }
 
-func (x *FavoriteActionRequest) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+func (x *FavoriteActionRequest) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	x.Token, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
-func (x *FavoriteActionRequest) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+func (x *FavoriteActionRequest) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.VideoId, offset, err = fastpb.ReadInt64(buf, _type)
 	return offset, err
 }
 
-func (x *FavoriteActionRequest) fastReadField4(buf []byte, _type int8) (offset int, err error) {
+func (x *FavoriteActionRequest) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	x.ActionType, offset, err = fastpb.ReadInt32(buf, _type)
 	return offset, err
 }
@@ -546,33 +546,33 @@ func (x *FavoriteActionRequest) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
+	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
 	offset += x.fastWriteField3(buf[offset:])
-	offset += x.fastWriteField4(buf[offset:])
+	return offset
+}
+
+func (x *FavoriteActionRequest) fastWriteField1(buf []byte) (offset int) {
+	if x.Token == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.Token)
 	return offset
 }
 
 func (x *FavoriteActionRequest) fastWriteField2(buf []byte) (offset int) {
-	if x.Token == "" {
+	if x.VideoId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 2, x.Token)
+	offset += fastpb.WriteInt64(buf[offset:], 2, x.VideoId)
 	return offset
 }
 
 func (x *FavoriteActionRequest) fastWriteField3(buf []byte) (offset int) {
-	if x.VideoId == 0 {
-		return offset
-	}
-	offset += fastpb.WriteInt64(buf[offset:], 3, x.VideoId)
-	return offset
-}
-
-func (x *FavoriteActionRequest) fastWriteField4(buf []byte) (offset int) {
 	if x.ActionType == 0 {
 		return offset
 	}
-	offset += fastpb.WriteInt32(buf[offset:], 4, x.ActionType)
+	offset += fastpb.WriteInt32(buf[offset:], 3, x.ActionType)
 	return offset
 }
 
@@ -813,33 +813,33 @@ func (x *FavoriteActionRequest) Size() (n int) {
 	if x == nil {
 		return n
 	}
+	n += x.sizeField1()
 	n += x.sizeField2()
 	n += x.sizeField3()
-	n += x.sizeField4()
+	return n
+}
+
+func (x *FavoriteActionRequest) sizeField1() (n int) {
+	if x.Token == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.Token)
 	return n
 }
 
 func (x *FavoriteActionRequest) sizeField2() (n int) {
-	if x.Token == "" {
+	if x.VideoId == 0 {
 		return n
 	}
-	n += fastpb.SizeString(2, x.Token)
+	n += fastpb.SizeInt64(2, x.VideoId)
 	return n
 }
 
 func (x *FavoriteActionRequest) sizeField3() (n int) {
-	if x.VideoId == 0 {
-		return n
-	}
-	n += fastpb.SizeInt64(3, x.VideoId)
-	return n
-}
-
-func (x *FavoriteActionRequest) sizeField4() (n int) {
 	if x.ActionType == 0 {
 		return n
 	}
-	n += fastpb.SizeInt32(4, x.ActionType)
+	n += fastpb.SizeInt32(3, x.ActionType)
 	return n
 }
 
@@ -937,9 +937,9 @@ var fieldIDToName_Video = map[int32]string{
 }
 
 var fieldIDToName_FavoriteActionRequest = map[int32]string{
-	2: "Token",
-	3: "VideoId",
-	4: "ActionType",
+	1: "Token",
+	2: "VideoId",
+	3: "ActionType",
 }
 
 var fieldIDToName_FavoriteActionResponse = map[int32]string{

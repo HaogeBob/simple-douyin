@@ -24,6 +24,7 @@ message check_user_request {
 message check_user_response {
     BaseResp base_resp = 1;
     int64 user_id = 2;//用户id
+    string token = 3;//用户鉴权token
 }
 
 message register_user_request {

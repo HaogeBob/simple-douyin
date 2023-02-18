@@ -169,6 +169,11 @@ func (x *CheckUserResponse) FastRead(buf []byte, _type int8, number int32) (offs
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -194,6 +199,11 @@ func (x *CheckUserResponse) fastReadField1(buf []byte, _type int8) (offset int, 
 
 func (x *CheckUserResponse) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.UserId, offset, err = fastpb.ReadInt64(buf, _type)
+	return offset, err
+}
+
+func (x *CheckUserResponse) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.Token, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -479,6 +489,7 @@ func (x *CheckUserResponse) FastWrite(buf []byte) (offset int) {
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -495,6 +506,14 @@ func (x *CheckUserResponse) fastWriteField2(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteInt64(buf[offset:], 2, x.UserId)
+	return offset
+}
+
+func (x *CheckUserResponse) fastWriteField3(buf []byte) (offset int) {
+	if x.Token == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 3, x.Token)
 	return offset
 }
 
@@ -724,6 +743,7 @@ func (x *CheckUserResponse) Size() (n int) {
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
+	n += x.sizeField3()
 	return n
 }
 
@@ -740,6 +760,14 @@ func (x *CheckUserResponse) sizeField2() (n int) {
 		return n
 	}
 	n += fastpb.SizeInt64(2, x.UserId)
+	return n
+}
+
+func (x *CheckUserResponse) sizeField3() (n int) {
+	if x.Token == "" {
+		return n
+	}
+	n += fastpb.SizeString(3, x.Token)
 	return n
 }
 
@@ -874,6 +902,7 @@ var fieldIDToName_CheckUserRequest = map[int32]string{
 var fieldIDToName_CheckUserResponse = map[int32]string{
 	1: "BaseResp",
 	2: "UserId",
+	3: "Token",
 }
 
 var fieldIDToName_RegisterUserRequest = map[int32]string{
