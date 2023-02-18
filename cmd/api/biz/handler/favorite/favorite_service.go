@@ -6,24 +6,34 @@ import (
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	favorite "github.com/simple/douyin/biz/model/favorite"
+	favoriteapi "github.com/simple/douyin/cmd/api/biz/model/favorite"
+	"github.com/simple/douyin/cmd/api/biz/rpc"
+	"github.com/simple/douyin/kitex_gen/favorite"
+	"github.com/simple/douyin/pkg/constants"
+	"github.com/simple/douyin/pkg/errno"
 )
 
 // FavoriteAction .
 // @router /douyin/favorite/action/ [POST]
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req favorite.FavoriteActionRequest
+	var req favoriteapi.FavoriteActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	err = rpc.FavoriteAction(context.Background(), &favorite.FavoriteActionRequest{
+		Token:      req.Token,
+		VideoId:    req.VideoID,
+		ActionType: req.ActionType,
+	})
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
 
-	resp := new(favorite.FavoriteActionResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	SendResponse(c, errno.Success, nil)
 }
 
 // FavoriteList .
@@ -33,11 +43,14 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	var req favorite.FavoriteListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-
-	resp := new(favorite.FavoriteListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	v, _ := c.Get(constants.IdentityKey)
+	videos, err := rpc.FavoriteList(context.Background(), &favorite.FavoriteListRequest{})
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	SendResponse(c, errno.Success, videos)
 }
