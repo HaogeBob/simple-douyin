@@ -3,48 +3,40 @@ package rpc
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/easy_note/kitex_gen/demouser/userservice"
-	"github.com/cloudwego/biz-demo/easy_note/pkg/consts"
-	"github.com/cloudwego/biz-demo/easy_note/pkg/errno"
-	"github.com/cloudwego/biz-demo/easy_note/pkg/mw"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/kitex-contrib/obs-opentelemetry/provider"
-	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	"github.com/simple/douyin/kitex_gen/demouser"
+	"github.com/simple/douyin/kitex_gen/favorite"
+	"github.com/simple/douyin/kitex_gen/favorite/favoriteservice"
+	"github.com/simple/douyin/pkg/constants"
+	"github.com/simple/douyin/pkg/errno"
 )
 
-var userClient userservice.Client
+var favoriteClient favoriteservice.Client
 
-func initUser() {
-	r, err := etcd.NewEtcdResolver([]string{consts.ETCDAddress})
+func initFavorite() {
+	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddress})
 	if err != nil {
 		panic(err)
 	}
-	provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(consts.ApiServiceName),
-		provider.WithExportEndpoint(consts.ExportEndpoint),
-		provider.WithInsecure(),
-	)
-	c, err := userservice.NewClient(
-		consts.UserServiceName,
+	c, err := favoriteservice.NewClient(
+		constants.FavoriteServiceName,
 		client.WithResolver(r),
 		client.WithMuxConnection(1),
-		client.WithMiddleware(mw.CommonMiddleware),
-		client.WithInstanceMW(mw.ClientMiddleware),
-		client.WithSuite(tracing.NewClientSuite()),
-		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: consts.ApiServiceName}),
+		// client.WithMiddleware(middleware.CommonMiddleware),
+		// client.WithInstanceMW(middleware.ClientMiddleware),
+		// client.WithSuite(tracing.NewClientSuite()),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: constants.ApiServiceName}),
 	)
 	if err != nil {
 		panic(err)
 	}
-	userClient = c
+	favoriteClient = c
 }
 
-// CreateUser create user info
-func CreateUser(ctx context.Context, req *demouser.CreateUserRequest) error {
-	resp, err := userClient.CreateUser(ctx, req)
+// FavoriteAction favorite or no favorite
+func FavoriteAction(ctx context.Context, req *favorite.FavoriteActionRequest) error {
+	resp, err := favoriteClient.FavoriteAction(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -54,14 +46,14 @@ func CreateUser(ctx context.Context, req *demouser.CreateUserRequest) error {
 	return nil
 }
 
-// CheckUser check user info
-func CheckUser(ctx context.Context, req *demouser.CheckUserRequest) (int64, error) {
-	resp, err := userClient.CheckUser(ctx, req)
+// FavoriteList list user favorite list
+func FavoriteList(ctx context.Context, req *favorite.FavoriteListRequest) ([]*favorite.Video, error) {
+	resp, err := favoriteClient.FavoriteList(ctx, req)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	if resp.BaseResp.StatusCode != 0 {
-		return 0, errno.NewErrNo(resp.BaseResp.StatusCode, resp.BaseResp.StatusMessage)
+		return nil, errno.NewErrNo(resp.BaseResp.StatusCode, resp.BaseResp.StatusMessage)
 	}
-	return resp.UserId, nil
+	return resp.VideoList, nil
 }

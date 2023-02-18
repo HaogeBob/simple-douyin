@@ -4,7 +4,7 @@ package Favorite
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	favorite "github.com/simple/douyin/biz/handler/favorite"
+	favorite "github.com/simple/douyin/cmd/api/biz/handler/favorite"
 )
 
 /*
