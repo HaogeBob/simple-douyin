@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/apache/thrift v0.18.0
+	github.com/cloudwego/fastpb v0.0.3
 	github.com/cloudwego/kitex v0.4.4
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.4.3
@@ -15,6 +16,7 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	go.opentelemetry.io/otel/trace v1.13.0
+	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.7
 	gorm.io/gorm v1.24.5
 	gorm.io/plugin/opentelemetry v0.1.1
@@ -28,7 +30,6 @@ require (
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/chenzhuoyu/iasm v0.0.0-20220922113352-bfc57d23ee7f // indirect
 	github.com/choleraehyq/pid v0.0.16 // indirect
-	github.com/cloudwego/fastpb v0.0.3 // indirect
 	github.com/cloudwego/frugal v0.1.4 // indirect
 	github.com/cloudwego/netpoll v0.3.2 // indirect
 	github.com/cloudwego/thriftgo v0.2.7 // indirect
@@ -77,7 +78,6 @@ require (
 	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20230216225411-c8e22ba71e44 // indirect
 	google.golang.org/grpc v1.53.0 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
