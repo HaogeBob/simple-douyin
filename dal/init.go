@@ -4,7 +4,7 @@ import (
 	"github.com/simple/douyin/dal/db"
 )
 
-//Init init dal
+// Init init dal
 func Init() {
 	db.Init() //mysql
 }
