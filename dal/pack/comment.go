@@ -39,11 +39,9 @@ func CommentList(currentId int64, comments []*db.CommentRaw, userMap map[int64]*
 
 		var isFollow bool = false
 
-		if currentId != -1 {
-			_, ok := relationMap[commentRaw.UserId]
-			if ok {
-				isFollow = true
-			}
+		_, ok = relationMap[commentRaw.UserId]
+		if ok {
+			isFollow = true
 		}
 
 		commentList = append(commentList, &comment.Comment{

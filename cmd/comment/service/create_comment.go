@@ -28,7 +28,10 @@ func (s *CreateCommentService) CreateComment(req *comment.CreateCommentRequest) 
 	if err != nil {
 		return nil, err
 	}
-
+	if currentId <= 0 {
+		return nil, errors.New("Token compare error")
+	}
+	
 	videos, err := db.QueryVideoByVideoIds(s.ctx, []int64{req.VideoId})
 	if err != nil {
 		return nil, err

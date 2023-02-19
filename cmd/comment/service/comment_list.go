@@ -26,6 +26,10 @@ func (s *CommentListService) CommentList(req *comment.CommentListRequest) ([]*co
 	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
 	currentId, _ := Jwt.CheckToken(req.Token)
 
+	if currentId <= 0 {
+		return nil, errors.New("Token compare error")
+	}
+
 	//验证视频Id是否存在
 	videos, err := db.QueryVideoByVideoIds(s.ctx, []int64{req.VideoId})
 	if err != nil {
@@ -58,14 +62,10 @@ func (s *CommentListService) CommentList(req *comment.CommentListRequest) ([]*co
 	}
 
 	var relationMap map[int64]*db.RelationRaw
-	if currentId == -1 {
-		relationMap = nil
-	} else {
-		//获取一系列关注信息
-		relationMap, err = db.QueryRelationByIds(s.ctx, currentId, userIds)
-		if err != nil {
-			return nil, err
-		}
+	//获取一系列关注信息
+	relationMap, err = db.QueryRelationByIds(s.ctx, currentId, userIds)
+	if err != nil {
+		return nil, err
 	}
 
 	commentList := pack.CommentList(currentId, comments, userMap, relationMap)

@@ -60,7 +60,7 @@ func (*CommentServiceImpl) DeleteComment(ctx context.Context, req *comment.Delet
 func (*CommentServiceImpl) CommentList(ctx context.Context, req *comment.CommentListRequest) (resp *comment.CommentListResponse, err error) {
 	resp = new(comment.CommentListResponse)
 
-	if req.VideoId == 0 {
+	if len(req.Token) == 0 || req.VideoId == 0 {
 		resp.BaseResp = pack.NewCommentBaseResp(errno.ParamErr)
 		resp.CommentList = nil
 		return resp, nil
