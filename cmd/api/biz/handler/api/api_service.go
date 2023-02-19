@@ -12,7 +12,6 @@ import (
 	"github.com/simple/douyin/cmd/api/biz/mw"
 	"github.com/simple/douyin/cmd/api/biz/rpc"
 	"github.com/simple/douyin/kitex_gen/user"
-	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/errno"
 )
 
@@ -55,10 +54,10 @@ func DouyinUserGet(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	// fmt.Println(req.UserID)
-	v, _ := c.Get(constants.IdentityKey)
+	// v, _ := c.Get(constants.IdentityKey)
 	// fmt.Println(v)
 	user, err := rpc.MGetUser(context.Background(), &user.MGetUserRequest{
-		UserId: v.(*api.User).ID,
+		UserId: req.UserID,
 		// UserId: 4,
 	})
 	if err != nil {
