@@ -11,9 +11,9 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	CheckUser(ctx context.Context, Req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error)
-	RegisterUser(ctx context.Context, Req *user.RegisterUserRequest, callOptions ...callopt.Option) (r *user.RegisterUserResponse, err error)
-	UserInfo(ctx context.Context, Req *user.UserInfoRequest, callOptions ...callopt.Option) (r *user.UserInfoResponse, err error)
+	CreateUser(ctx context.Context, req *user.CreateUserRequest, callOptions ...callopt.Option) (r *user.CreateUserResponse, err error)
+	CheckUser(ctx context.Context, req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error)
+	MGetUser(ctx context.Context, req *user.MGetUserRequest, callOptions ...callopt.Option) (r *user.MGetUserResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -45,17 +45,17 @@ type kUserServiceClient struct {
 	*kClient
 }
 
-func (p *kUserServiceClient) CheckUser(ctx context.Context, Req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error) {
+func (p *kUserServiceClient) CreateUser(ctx context.Context, req *user.CreateUserRequest, callOptions ...callopt.Option) (r *user.CreateUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckUser(ctx, Req)
+	return p.kClient.CreateUser(ctx, req)
 }
 
-func (p *kUserServiceClient) RegisterUser(ctx context.Context, Req *user.RegisterUserRequest, callOptions ...callopt.Option) (r *user.RegisterUserResponse, err error) {
+func (p *kUserServiceClient) CheckUser(ctx context.Context, req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.RegisterUser(ctx, Req)
+	return p.kClient.CheckUser(ctx, req)
 }
 
-func (p *kUserServiceClient) UserInfo(ctx context.Context, Req *user.UserInfoRequest, callOptions ...callopt.Option) (r *user.UserInfoResponse, err error) {
+func (p *kUserServiceClient) MGetUser(ctx context.Context, req *user.MGetUserRequest, callOptions ...callopt.Option) (r *user.MGetUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.UserInfo(ctx, Req)
+	return p.kClient.MGetUser(ctx, req)
 }
