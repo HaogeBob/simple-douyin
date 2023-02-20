@@ -4,11 +4,19 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/simple/douyin/cmd/api/biz/rpc"
 )
 
-func main() {
-	h := server.Default()
+func Init() {
+	rpc.Init()
+}
 
+func main() {
+	Init()
+	h := server.New(
+		server.WithHostPorts(":8080"),
+		server.WithHandleMethodNotAllowed(true),
+	)
 	register(h)
 	h.Spin()
 }

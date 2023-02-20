@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -36,6 +37,7 @@ func initFavorite() {
 
 // FavoriteAction favorite or no favorite
 func FavoriteAction(ctx context.Context, req *favorite.FavoriteActionRequest) error {
+	fmt.Println("rpc here, ready to invoke client")
 	resp, err := favoriteClient.FavoriteAction(ctx, req)
 	if err != nil {
 		return err
