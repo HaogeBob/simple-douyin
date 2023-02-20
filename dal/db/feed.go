@@ -7,8 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 type Videos struct {
 	gorm.Model
 	Id             int64  `json:"id"`
@@ -19,15 +17,12 @@ type Videos struct {
 	Comment_count  int64  `json:"comment_count"`
 	Is_favorite    bool   `json:"is_favorite"`
 	Title          string `json:"title"`
-	Token          string `json:"token"`
 	Release_time   int64  `json:"release_time"`
 }
 
 func (v *Videos) TableName() string {
 	return constants.VideoTableName
 }
-
-
 
 func Query_vedio(ctx context.Context, author_id int64, time int64) ([]*Videos, error) {
 
