@@ -29,7 +29,7 @@ func CreateComment(ctx context.Context, comment *CommentRaw) error {
 		}
 		err = tx.Table("video").Where("id = ?", comment.VideoId).Update("comment_count", gorm.Expr("comment_count + ?", 1)).Error
 		if err != nil {
-			klog.Error("AddCommentCount error " + err.Error())
+			klog.Error("add comment_count fail " + err.Error())
 			return err
 		}
 		return nil
@@ -41,14 +41,23 @@ func CreateComment(ctx context.Context, comment *CommentRaw) error {
 func DeleteComment(ctx context.Context, commentId int64) (*CommentRaw, error) {
 	var commentRaw *CommentRaw
 	db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		err := tx.Table("comment").Where("id = ?", commentId).Delete(&CommentRaw{}).Error
+		err := tx.Table("comment").Where("id = ?", commentId).First(&commentRaw).Error
+		if err == gorm.ErrRecordNotFound {
+			klog.Errorf("not find comment %v, %v", commentRaw, err.Error())
+			return err
+		}
+		if err != nil {
+			klog.Errorf("find comment %v fail, %v", commentRaw, err.Error())
+			return err
+		}
+		err = tx.Table("comment").Where("id = ?", commentId).Delete(&CommentRaw{}).Error
 		if err != nil {
 			klog.Error("delete comment fail " + err.Error())
 			return err
 		}
 		err = tx.Table("video").Where("id = ?", commentRaw.VideoId).Update("comment_count", gorm.Expr("comment_count - ?", 1)).Error
 		if err != nil {
-			klog.Error("MinusCommentCount error " + err.Error())
+			klog.Error("minus comment_count fail " + err.Error())
 			return err
 		}
 		return nil
