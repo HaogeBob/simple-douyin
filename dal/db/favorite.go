@@ -17,6 +17,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/simple/douyin/pkg/constants"
 	"gorm.io/gorm"
@@ -35,6 +36,7 @@ func (n *Favorite) TableName() string {
 
 // FavoriteAction update favorite info
 func FavoriteAction(ctx context.Context, favorites []*Favorite) error {
+	fmt.Println("db here")
 	if err := DB.WithContext(ctx).Create(favorites).Error; err != nil {
 		return err
 	}

@@ -26,9 +26,9 @@ struct Video {
 }
 
 struct FavoriteActionRequest {
-    2: string token //用户鉴权token
-    3: i64 video_id //视频id
-    4: i32 action_type //1-点赞，2-取消点赞
+    2: string token (api.form="token", api.vd="len($) > 0")//用户鉴权token
+    3: i64 video_id (api.form="video_id")//视频id
+    4: i32 action_type (api.form="action_type")//1-点赞，2-取消点赞
 }
 
 struct FavoriteActionResponse {
@@ -36,8 +36,8 @@ struct FavoriteActionResponse {
 }
 
 struct FavoriteListRequest {
-    1: i64 user_id //用户id
-    2: string token //用户鉴权token
+    1: i64 user_id (api.query="user_id")//用户id
+    2: string token (api.query="token", api.vd="len($) > 0")//用户鉴权token
 }
 
 struct FavoriteListResponse {

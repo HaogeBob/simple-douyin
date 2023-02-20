@@ -4,6 +4,8 @@ package favoriteservice
 
 import (
 	"context"
+	"fmt"
+
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 	favorite "github.com/simple/douyin/kitex_gen/favorite"
@@ -45,6 +47,7 @@ type kFavoriteServiceClient struct {
 }
 
 func (p *kFavoriteServiceClient) FavoriteAction(ctx context.Context, Req *favorite.FavoriteActionRequest, callOptions ...callopt.Option) (r *favorite.FavoriteActionResponse, err error) {
+	fmt.Println("client here, ready to service")
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.FavoriteAction(ctx, Req)
 }
