@@ -28,7 +28,8 @@ func (s FeedService) Feed(token string, latestTime int64) ([]*feed.Video, int64,
 	if currentId <= 0 {
 		return nil, 0, errors.New("token compare error")
 	}
-	user, err := db.Query_user(s.ctx, token)
+
+	user, err := db.Query_user_info(s.ctx, currentId)
 
 	if err != nil {
 		return nil, 0, err

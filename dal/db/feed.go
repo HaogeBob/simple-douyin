@@ -7,13 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	Id             int64  `json:"id"`
-	Name           string `json:"name"`
-	Follow_count   int64  `json:"follow_count"`
-	Follower_count int64  `json:"follower_count"`
-	Is_follow      bool   `json:"is_follow"`
-}
+
 
 type Videos struct {
 	gorm.Model
@@ -33,19 +27,7 @@ func (v *Videos) TableName() string {
 	return constants.VideoTableName
 }
 
-func (u *User) TableName() string {
-	return constants.UserinfoName
-}
 
-func Query_user(ctx context.Context, token string) (User, error) {
-
-	var res User
-	if err := DB.WithContext(ctx).Where("token == ?", token).Find(&res).Error; err != nil {
-		return res, err
-	}
-	return res, nil
-
-}
 
 func Query_vedio(ctx context.Context, author_id int64, time int64) ([]*Videos, error) {
 
