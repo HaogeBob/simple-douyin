@@ -28,9 +28,9 @@ message Video {
 }
 
 message favorite_action_request {
-    string token = 2;//用户鉴权token
-    int64 video_id = 3;//视频id
-    int32 action_type = 4;//1-点赞，2-取消点赞
+    string token = 1;//用户鉴权token
+    int64 video_id = 2;//视频id
+    int32 action_type = 3;//1-点赞，2-取消点赞
 }
 
 message favorite_action_response {

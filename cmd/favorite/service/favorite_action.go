@@ -14,3 +14,58 @@
 //
 
 package service
+
+import (
+	"context"
+
+	"github.com/simple/douyin/dal/db"
+	"github.com/simple/douyin/kitex_gen/favorite"
+	"github.com/simple/douyin/pkg/constants"
+)
+
+type FavoriteActionService struct {
+	ctx context.Context
+}
+
+// NewFavoriteActionService new FavoriteActionService
+func NewFavoriteActionService(ctx context.Context) *FavoriteActionService {
+	return &FavoriteActionService{ctx: ctx}
+}
+
+// todo:
+func TokenToUserId(token string) (int64, error) {
+	return 0xffff, nil
+}
+
+// FavoriteAction create favorite info
+func (s *FavoriteActionService) FavoriteAction(req *favorite.FavoriteActionRequest) error {
+	userId, err := TokenToUserId(req.Token)
+	if err != nil {
+		return err
+	}
+
+	videoId := req.VideoId
+	favoriteId, err := db.QueryFavoriteAction(s.ctx, userId, videoId)
+
+	favoriteModel := &db.Favorite{
+		FavoriteId:      favoriteId,
+		UserId:          userId,
+		FavoriteVideoId: videoId,
+	}
+
+	// there has been record before
+	if err == nil {
+		if req.ActionType == constants.Like {
+			return nil
+		} else {
+			return db.DeleteFavoriteAction(s.ctx, favoriteId)
+		}
+	}
+
+	// no record before
+	if req.ActionType == constants.Unlike {
+		return nil
+	} else {
+		return db.CreateFavoriteAction(s.ctx, []*db.Favorite{favoriteModel})
+	}
+}

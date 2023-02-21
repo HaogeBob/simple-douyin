@@ -14,3 +14,61 @@
 //
 
 package service
+
+import (
+	"context"
+
+	"github.com/simple/douyin/cmd/favorite/pack"
+	"github.com/simple/douyin/dal/db"
+	"github.com/simple/douyin/kitex_gen/favorite"
+)
+
+type FavoriteListService struct {
+	ctx context.Context
+}
+
+// NewFavoriteListService new FavoriteListService
+func NewFavoriteListService(ctx context.Context) *FavoriteListService {
+	return &FavoriteListService{ctx: ctx}
+}
+
+// FavoriteList create favorite info
+// todo
+func (s *FavoriteListService) FavoriteList(req *favorite.FavoriteListRequest) ([]*favorite.Video, error) {
+	favoriteModels, err := db.FavoriteList(s.ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	videoIds := pack.VideoIds(favoriteModels)
+	videos, err := db.QueryVideoInfo(s.ctx, videoIds)
+	if err != nil {
+		return nil, err
+	}
+	userIds := pack.UserIds(videos)
+	users, err := db.QueryUserInfo(s.ctx, userIds)
+	if err != nil {
+		return nil, err
+	}
+	var res []*favorite.Video
+	for i := 0; i < len(videos); i++ {
+		res = append(res, &favorite.Video{
+			Id: int64(videos[i].ID),
+			Author: &favorite.User{
+				Id:            int64(users[i].ID),
+				Name:          users[i].UserName,
+				FollowCount:   users[i].FollowCount,
+				FollowerCount: users[i].FollowerCount,
+				IsFollow:      users[i].IsFollow,
+			},
+			PlayUrl:       videos[i].PlayUrl,
+			CoverUrl:      videos[i].CoverUrl,
+			FavoriteCount: videos[i].FavoriteCount,
+			CommentCount:  videos[i].CommentCount,
+			IsFavorite:    videos[i].IsFavorite,
+			Title:         videos[i].VideoTitle,
+		})
+	}
+
+	return res, nil
+}

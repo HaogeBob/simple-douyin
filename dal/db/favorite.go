@@ -33,17 +33,36 @@ func (n *Favorite) TableName() string {
 	return constants.FavoriteTableName
 }
 
-// FavoriteAction update favorite info
-func FavoriteAction(ctx context.Context, favorites []*Favorite) error {
+// CreateFavoriteAction create favorite info
+func CreateFavoriteAction(ctx context.Context, favorites []*Favorite) error {
 	if err := DB.WithContext(ctx).Create(favorites).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
+// CreateFavoriteAction delete favorite info
+func DeleteFavoriteAction(ctx context.Context, favoriteId int64) error {
+	if err := DB.WithContext(ctx).Where("favorite_id = ?", favoriteId).Delete(&Favorite{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// QueryFavoriteAction query favorite info => return favorite id if the query exists, else throw out an error
+// todo: maybe need changed?
+func QueryFavoriteAction(ctx context.Context, userId int64, videoId int64) (int64, error) {
+	var res int64
+	if err := DB.WithContext(ctx).Where("user_id = ? AND video_id = ?", userId, videoId).Find(&res).Error; err != nil {
+		return res, err
+	}
+	return res, nil
+}
+
+// FavoriteList search the favorite list of a person
 func FavoriteList(ctx context.Context, userID int64) ([]*Favorite, error) {
 	var res []*Favorite
-	if err := DB.WithContext(ctx).Where("id in ?", userID).Find(&res).Error; err != nil {
+	if err := DB.WithContext(ctx).Where("user_id = ?", userID).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
