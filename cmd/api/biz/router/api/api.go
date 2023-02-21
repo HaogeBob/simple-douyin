@@ -4,7 +4,7 @@ package Api
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	api "github.com/simple/douyin/biz/handler/api"
+	api "github.com/simple/douyin/cmd/api/biz/handler/api"
 )
 
 /*

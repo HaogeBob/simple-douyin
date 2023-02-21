@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	api "github.com/simple/douyin/biz/model/api"
+	api "github.com/simple/douyin/cmd/api/biz/model/api"
 )
 
 // DouyinUserRegister .

@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS `vedios`(
     `vedio_title`  varchar(128) NOT NULL DEFAULT '' COMMENT 'cover_url',
     `release_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'release_time',
 
-    PRIMARY KEY ( `author_id` ) COMMENT 'author_id'
+    PRIMARY KEY ( `id` ) COMMENT 'vedio_id'
 )ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

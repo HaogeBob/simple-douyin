@@ -27,7 +27,7 @@ const (
 
 	//jwt
 	SecretKey   = "secret key"
-	IdentiryKey = "id"
+	IdentityKey = "id"
 
 	//时间字段格式
 	TimeFormat = "2006-01-02 15:04:05"

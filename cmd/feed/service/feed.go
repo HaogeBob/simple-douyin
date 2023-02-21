@@ -3,9 +3,11 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 
 	"github.com/simple/douyin/dal/db"
+	pack "github.com/simple/douyin/dal/pack"
 	"github.com/simple/douyin/kitex_gen/feed"
 	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/jwt"
@@ -25,10 +27,12 @@ func (s FeedService) Feed(token string, latestTime int64) ([]*feed.Video, int64,
 	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
 
 	currentId, _ := Jwt.CheckToken(token)
+	//currentId := int64(1)
+	fmt.Println("ID: ", currentId)
 	if currentId <= 0 {
 		return nil, 0, errors.New("token compare error")
 	}
-
+	currentId = 1
 	user, err := db.Query_user_info(s.ctx, currentId)
 
 	if err != nil {
@@ -46,24 +50,20 @@ func (s FeedService) Feed(token string, latestTime int64) ([]*feed.Video, int64,
 		FollowerCount: user.Follower_count, IsFollow: user.Is_follow}
 
 	var time = int64(math.MaxInt64)
-	var temp feed.Video
 
 	for i := 0; i < len(videos); i++ {
-		temp.Author = &user_info
-		temp.Id = videos[i].Id
-		temp.Title = videos[i].Title
 
-		temp.CommentCount = videos[i].Comment_count
-		temp.FavoriteCount = videos[i].Favorite_count
-		temp.CoverUrl = videos[i].Cover_url
-		temp.PlayUrl = videos[i].Play_url
-		temp.IsFavorite = videos[i].Is_favorite
+		tp, err := pack.Feed_pack(videos[i])
+		if err != nil {
+			return nil, 0, err
+		}
+		tp.Author = &user_info
 
 		if videos[i].Release_time < time {
 			time = videos[i].Release_time
 		}
 
-		req = append(req, &temp)
+		req = append(req, tp)
 	}
 
 	return req, time, nil

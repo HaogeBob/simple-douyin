@@ -24,16 +24,26 @@ func Init() {
 			LogLevel:      logger.Info,
 		},
 	)
-	DB, err = gorm.Open(mysql.Open(constants.MySQLDefaultDSN),
+
+	dsn := constants.MySQLDefaultDSN
+	//dsn = "root:th163679@tcp(localhost:3306)/test?charset=utf8&parseTime=True&loc=Local"
+
+	//t := mysql.Open(dsn)
+
+	//fmt.Printf("dsn: %#v\n", t)
+
+	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt: true,
 			Logger:      gormlogrus,
 		},
 	)
+
 	if err != nil {
 		panic(err)
 	}
 	if err := DB.Use(tracing.NewPlugin()); err != nil {
 		panic(err)
 	}
+	//fmt.Println("err: ", err)
 }
