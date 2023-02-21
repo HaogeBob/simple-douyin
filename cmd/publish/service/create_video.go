@@ -17,13 +17,12 @@ func NewCreateVideoService(ctx context.Context) *CreateVideoService {
 
 func (s *CreateVideoService) CreateVideo(req *publish.PublishActionRequest) error {
 	videoModel := &db.Video{
-		AuthorId:      111,
-		PlayUrl:       "111",
-		CoverUrl:      "111",
+		AuthorId:      req.UserId,
+		PlayUrl:       req.PlayUrl,
+		CoverUrl:      req.CoverUrl,
 		Title:         req.Title,
-		FavorateCount: 111,
-		CommentCount:  111,
-		IsFavorite:    true,
+		FavorateCount: 0,
+		CommentCount:  0,
 	}
 	return db.CreateVideo(s.ctx, []*db.Video{videoModel})
 }

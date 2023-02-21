@@ -12,35 +12,18 @@ import (
 // PublishServiceImpl implements the last service interface defined in the IDL.
 type PublishServiceImpl struct{}
 
-var (
-	videoIndexMap = map[string]struct{}{
-		".mp4":  {},
-		".avi":  {},
-		".wmv":  {},
-		".flv":  {},
-		".mpeg": {},
-		".mov":  {},
-	}
-	pictureIndexMap = map[string]struct{}{
-		".jpg": {},
-		".bmp": {},
-		".png": {},
-		".svg": {},
-	}
-)
-
 // PublishAction implements the PublishServiceImpl interface.
 func (s *PublishServiceImpl) PublishAction(ctx context.Context, req *publish.PublishActionRequest) (resp *publish.PublishActionResponse, err error) {
 	// TODO: Your code here...
 	resp = new(publish.PublishActionResponse)
 
-	if len(req.Title) <= 0 || len(req.Data) <= 0 {
-		resp.BaseResp = pack.BuildBaseResp(errno.ParamErr)
+	err = service.NewCreateVideoService(ctx).CreateVideo(req)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
 		return resp, nil
 	}
-	// user := new(publish.User)
-
-	return
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+	return resp, nil
 }
 
 // PublishList implements the PublishServiceImpl interface.
@@ -48,12 +31,14 @@ func (s *PublishServiceImpl) PublishList(ctx context.Context, req *publish.Publi
 	// TODO: Your code here...
 	resp = new(publish.PublishListResponse)
 
-	if len(req.Token) <= 0 {
-		resp.BaseResp = pack.BuildBaseResp(errno.ParamErr)
+	videos, err := service.NewMGetVideoService(ctx).MGetVideo(req)
+
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
 		return resp, nil
 	}
 
-	videos, err := service.NewMGetVideoService(ctx).MGetVideo(req)
-
-	return
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+	resp.VideoList = videos
+	return resp, nil
 }

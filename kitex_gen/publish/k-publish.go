@@ -1015,7 +1015,7 @@ func (p *PublishActionRequest) FastRead(buf []byte) (int, error) {
 		}
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField1(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1029,7 +1029,7 @@ func (p *PublishActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.LIST {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1045,6 +1045,20 @@ func (p *PublishActionRequest) FastRead(buf []byte) (int, error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				l, err = p.FastReadField4(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -1094,12 +1108,12 @@ ReadStructEndError:
 func (p *PublishActionRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Token = v
+		p.UserId = v
 
 	}
 	return offset, nil
@@ -1108,29 +1122,13 @@ func (p *PublishActionRequest) FastReadField1(buf []byte) (int, error) {
 func (p *PublishActionRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
-	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
-	offset += l
-	if err != nil {
-		return offset, err
-	}
-	p.Data = make([]int8, 0, size)
-	for i := 0; i < size; i++ {
-		var _elem int8
-		if v, l, err := bthrift.Binary.ReadByte(buf[offset:]); err != nil {
-			return offset, err
-		} else {
-			offset += l
-
-			_elem = v
-
-		}
-
-		p.Data = append(p.Data, _elem)
-	}
-	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
+
+		p.Title = v
+
 	}
 	return offset, nil
 }
@@ -1143,7 +1141,21 @@ func (p *PublishActionRequest) FastReadField3(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.Title = v
+		p.PlayUrl = v
+
+	}
+	return offset, nil
+}
+
+func (p *PublishActionRequest) FastReadField4(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.CoverUrl = v
 
 	}
 	return offset, nil
@@ -1161,6 +1173,7 @@ func (p *PublishActionRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField3(buf[offset:], binaryWriter)
+		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1174,6 +1187,7 @@ func (p *PublishActionRequest) BLength() int {
 		l += p.field1Length()
 		l += p.field2Length()
 		l += p.field3Length()
+		l += p.field4Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1182,8 +1196,8 @@ func (p *PublishActionRequest) BLength() int {
 
 func (p *PublishActionRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "token", thrift.STRING, 1)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Token)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1191,25 +1205,26 @@ func (p *PublishActionRequest) fastWriteField1(buf []byte, binaryWriter bthrift.
 
 func (p *PublishActionRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "data", thrift.LIST, 2)
-	listBeginOffset := offset
-	offset += bthrift.Binary.ListBeginLength(thrift.BYTE, 0)
-	var length int
-	for _, v := range p.Data {
-		length++
-		offset += bthrift.Binary.WriteByte(buf[offset:], v)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 2)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
 
-	}
-	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.BYTE, length)
-	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
 
 func (p *PublishActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "title", thrift.STRING, 3)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Title)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "play_url", thrift.STRING, 3)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.PlayUrl)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *PublishActionRequest) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "cover_url", thrift.STRING, 4)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.CoverUrl)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1217,8 +1232,8 @@ func (p *PublishActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.
 
 func (p *PublishActionRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 1)
-	l += bthrift.Binary.StringLengthNocopy(p.Token)
+	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.UserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1226,19 +1241,26 @@ func (p *PublishActionRequest) field1Length() int {
 
 func (p *PublishActionRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("data", thrift.LIST, 2)
-	l += bthrift.Binary.ListBeginLength(thrift.BYTE, len(p.Data))
-	var tmpV int8
-	l += bthrift.Binary.ByteLength(int8(tmpV)) * len(p.Data)
-	l += bthrift.Binary.ListEndLength()
+	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 2)
+	l += bthrift.Binary.StringLengthNocopy(p.Title)
+
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
 
 func (p *PublishActionRequest) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("title", thrift.STRING, 3)
-	l += bthrift.Binary.StringLengthNocopy(p.Title)
+	l += bthrift.Binary.FieldBeginLength("play_url", thrift.STRING, 3)
+	l += bthrift.Binary.StringLengthNocopy(p.PlayUrl)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *PublishActionRequest) field4Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("cover_url", thrift.STRING, 4)
+	l += bthrift.Binary.StringLengthNocopy(p.CoverUrl)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1408,7 +1430,7 @@ func (p *PublishListRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1473,12 +1495,12 @@ func (p *PublishListRequest) FastReadField1(buf []byte) (int, error) {
 func (p *PublishListRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Token = v
+		p.NowUserId = v
 
 	}
 	return offset, nil
@@ -1524,8 +1546,8 @@ func (p *PublishListRequest) fastWriteField1(buf []byte, binaryWriter bthrift.Bi
 
 func (p *PublishListRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "token", thrift.STRING, 2)
-	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Token)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "now_user_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.NowUserId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1542,8 +1564,8 @@ func (p *PublishListRequest) field1Length() int {
 
 func (p *PublishListRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("token", thrift.STRING, 2)
-	l += bthrift.Binary.StringLengthNocopy(p.Token)
+	l += bthrift.Binary.FieldBeginLength("now_user_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.NowUserId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

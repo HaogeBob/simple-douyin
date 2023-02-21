@@ -4,13 +4,11 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"github.com/simple/douyin/cmd/api/biz/mw"
-	"github.com/simple/douyin/cmd/api/biz/rpc"
+	"github.com/simple/douyin/cmd/publish/rpc"
 )
 
 func Init() {
-	rpc.Init()
-	mw.InitJWT()
+	rpc.InitRPC()
 }
 
 func main() {

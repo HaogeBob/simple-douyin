@@ -4,70 +4,96 @@ package api
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	api "github.com/simple/douyin/cmd/api/biz/model/api"
-	"github.com/simple/douyin/cmd/api/biz/mw"
 	"github.com/simple/douyin/cmd/api/biz/rpc"
-	"github.com/simple/douyin/kitex_gen/user"
+	"github.com/simple/douyin/cmd/publish/util"
+	"github.com/simple/douyin/kitex_gen/publish"
 	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/errno"
+	"github.com/simple/douyin/pkg/jwt"
 )
 
-// DouyinUserRegister .
-// @router /douyin/user/register/ [POST]
-func DouyinUserRegister(ctx context.Context, c *app.RequestContext) {
+// DouyinPublishAction .
+// @router /douyin/publish/action/ [POST]
+func DouyinPublishAction(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req api.DouyinUserRegisterRequest
+	var req api.DouyinPublishActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-	resp := new(api.DouyinUserRegisterResponse)
-	resp.UserID, err = rpc.CreateUser(context.Background(), &user.CreateUserRequest{
-		Username: req.Username,
-		Password: req.Password,
-	})
+
+	resp := new(api.DouyinPublishActionResponse)
+
+	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
+	currentId, _ := Jwt.CheckToken(req.Token)
+	if currentId <= 0 {
+		SendResponse(c, errno.ParamErr, nil)
+		return
+	}
+
+	file, err := c.FormFile("data")
 	if err != nil {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-	mw.JwtMiddleware.LoginHandler(ctx, c)
+	path := "./static/" + file.Filename
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+
+	err = rpc.PublishAction(context.Background(), &publish.PublishActionRequest{
+		UserId:   currentId,
+		Title:    req.Title,
+		PlayUrl:  util.GetFileUrl(path),
+		CoverUrl: util.GetFileUrl(path),
+	})
+
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	c.JSON(consts.StatusOK, resp)
 }
 
-// DouyinUserLogin .
-// @router /douyin/user/login/ [POST]
-func DouyinUserLogin(ctx context.Context, c *app.RequestContext) {
-	mw.JwtMiddleware.LoginHandler(ctx, c)
-}
-
-// DouyinUserGet .
-// @router /douyin/user/ [GET]
-func DouyinUserGet(ctx context.Context, c *app.RequestContext) {
+// DouyinPublishList .
+// @router /douyin/publish/list/ [POST]
+func DouyinPublishList(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req api.DouyinUserRequest
+	var req api.DouyinPublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		SendResponse(c, errno.ConvertErr(err), "binding err")
+		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	// fmt.Println(req.UserID)
-	v, _ := c.Get(constants.IdentityKey)
-	// fmt.Println(v)
-	user, err := rpc.MGetUser(context.Background(), &user.MGetUserRequest{
-		UserId: v.(*api.User).ID,
-		// UserId: 4,
+
+	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
+	currentId, _ := Jwt.CheckToken(req.Token)
+	if currentId <= 0 {
+		SendResponse(c, errno.ParamErr, nil)
+		return
+	}
+
+	video_list, err := rpc.PublishList(context.Background(), &publish.PublishListRequest{
+		UserId:    req.UserID,
+		NowUserId: currentId,
 	})
+
 	if err != nil {
-		SendResponse(c, errno.ConvertErr(err), "return err")
+		c.String(consts.StatusBadRequest, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, utils.H{
+
+	c.JSON(consts.StatusOK, utils.H{
 		"status_code": errno.Success.ErrCode,
 		"status_msg":  errno.Success.ErrMsg,
-		"user":        user,
+		"video_list":  video_list,
 	})
 }

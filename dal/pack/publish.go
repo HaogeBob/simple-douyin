@@ -6,7 +6,7 @@ import (
 	"github.com/simple/douyin/kitex_gen/user"
 )
 
-func Video(v *db.Video, u *user.User) *publish.Video {
+func Video(v *db.Video, u *user.User, is_favorite bool) *publish.Video {
 	if v == nil {
 		return nil
 	}
@@ -24,14 +24,14 @@ func Video(v *db.Video, u *user.User) *publish.Video {
 		CoverUrl:      v.CoverUrl,
 		FavoriteCount: v.FavorateCount,
 		CommentCount:  v.CommentCount,
-		IsFavorite:    v.IsFavorite,
+		IsFavorite:    is_favorite,
 	}
 }
 
-func Videos(vs []*db.Video, u *user.User) []*publish.Video {
+func Videos(vs []*db.Video, u *user.User, a []bool) []*publish.Video {
 	videos := make([]*publish.Video, 0)
 	for i := 0; i < len(vs); i++ {
-		video := Video(vs[i], u)
+		video := Video(vs[i], u, a[i])
 		videos = append(videos, video)
 	}
 	return videos

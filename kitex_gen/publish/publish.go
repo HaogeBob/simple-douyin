@@ -1250,9 +1250,10 @@ func (p *Video) Field8DeepEqual(src string) bool {
 }
 
 type PublishActionRequest struct {
-	Token string `thrift:"token,1" frugal:"1,default,string" json:"token"`
-	Data  []int8 `thrift:"data,2" frugal:"2,default,list<byte>" json:"data"`
-	Title string `thrift:"title,3" frugal:"3,default,string" json:"title"`
+	UserId   int64  `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
+	Title    string `thrift:"title,2" frugal:"2,default,string" json:"title"`
+	PlayUrl  string `thrift:"play_url,3" frugal:"3,default,string" json:"play_url"`
+	CoverUrl string `thrift:"cover_url,4" frugal:"4,default,string" json:"cover_url"`
 }
 
 func NewPublishActionRequest() *PublishActionRequest {
@@ -1263,31 +1264,39 @@ func (p *PublishActionRequest) InitDefault() {
 	*p = PublishActionRequest{}
 }
 
-func (p *PublishActionRequest) GetToken() (v string) {
-	return p.Token
-}
-
-func (p *PublishActionRequest) GetData() (v []int8) {
-	return p.Data
+func (p *PublishActionRequest) GetUserId() (v int64) {
+	return p.UserId
 }
 
 func (p *PublishActionRequest) GetTitle() (v string) {
 	return p.Title
 }
-func (p *PublishActionRequest) SetToken(val string) {
-	p.Token = val
+
+func (p *PublishActionRequest) GetPlayUrl() (v string) {
+	return p.PlayUrl
 }
-func (p *PublishActionRequest) SetData(val []int8) {
-	p.Data = val
+
+func (p *PublishActionRequest) GetCoverUrl() (v string) {
+	return p.CoverUrl
+}
+func (p *PublishActionRequest) SetUserId(val int64) {
+	p.UserId = val
 }
 func (p *PublishActionRequest) SetTitle(val string) {
 	p.Title = val
 }
+func (p *PublishActionRequest) SetPlayUrl(val string) {
+	p.PlayUrl = val
+}
+func (p *PublishActionRequest) SetCoverUrl(val string) {
+	p.CoverUrl = val
+}
 
 var fieldIDToName_PublishActionRequest = map[int16]string{
-	1: "token",
-	2: "data",
-	3: "title",
+	1: "user_id",
+	2: "title",
+	3: "play_url",
+	4: "cover_url",
 }
 
 func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1310,7 +1319,7 @@ func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1320,7 +1329,7 @@ func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.LIST {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1332,6 +1341,16 @@ func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1370,32 +1389,19 @@ ReadStructEndError:
 }
 
 func (p *PublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.UserId = v
 	}
 	return nil
 }
 
 func (p *PublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
-	}
-	p.Data = make([]int8, 0, size)
-	for i := 0; i < size; i++ {
-		var _elem int8
-		if v, err := iprot.ReadByte(); err != nil {
-			return err
-		} else {
-			_elem = v
-		}
-
-		p.Data = append(p.Data, _elem)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return err
+	} else {
+		p.Title = v
 	}
 	return nil
 }
@@ -1404,7 +1410,16 @@ func (p *PublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Title = v
+		p.PlayUrl = v
+	}
+	return nil
+}
+
+func (p *PublishActionRequest) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.CoverUrl = v
 	}
 	return nil
 }
@@ -1427,6 +1442,10 @@ func (p *PublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 			fieldId = 3
 			goto WriteFieldError
 		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
+			goto WriteFieldError
+		}
 
 	}
 	if err = oprot.WriteFieldStop(); err != nil {
@@ -1447,10 +1466,10 @@ WriteStructEndError:
 }
 
 func (p *PublishActionRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteI64(p.UserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1464,18 +1483,10 @@ WriteFieldEndError:
 }
 
 func (p *PublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.LIST, 2); err != nil {
+	if err = oprot.WriteFieldBegin("title", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.BYTE, len(p.Data)); err != nil {
-		return err
-	}
-	for _, v := range p.Data {
-		if err := oprot.WriteByte(v); err != nil {
-			return err
-		}
-	}
-	if err := oprot.WriteListEnd(); err != nil {
+	if err := oprot.WriteString(p.Title); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1489,10 +1500,10 @@ WriteFieldEndError:
 }
 
 func (p *PublishActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("title", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("play_url", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Title); err != nil {
+	if err := oprot.WriteString(p.PlayUrl); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1503,6 +1514,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *PublishActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("cover_url", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.CoverUrl); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *PublishActionRequest) String() string {
@@ -1518,41 +1546,45 @@ func (p *PublishActionRequest) DeepEqual(ano *PublishActionRequest) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.Token) {
+	if !p.Field1DeepEqual(ano.UserId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Data) {
+	if !p.Field2DeepEqual(ano.Title) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.Title) {
+	if !p.Field3DeepEqual(ano.PlayUrl) {
 		return false
 	}
-	return true
-}
-
-func (p *PublishActionRequest) Field1DeepEqual(src string) bool {
-
-	if strings.Compare(p.Token, src) != 0 {
+	if !p.Field4DeepEqual(ano.CoverUrl) {
 		return false
 	}
 	return true
 }
-func (p *PublishActionRequest) Field2DeepEqual(src []int8) bool {
 
-	if len(p.Data) != len(src) {
+func (p *PublishActionRequest) Field1DeepEqual(src int64) bool {
+
+	if p.UserId != src {
 		return false
 	}
-	for i, v := range p.Data {
-		_src := src[i]
-		if v != _src {
-			return false
-		}
+	return true
+}
+func (p *PublishActionRequest) Field2DeepEqual(src string) bool {
+
+	if strings.Compare(p.Title, src) != 0 {
+		return false
 	}
 	return true
 }
 func (p *PublishActionRequest) Field3DeepEqual(src string) bool {
 
-	if strings.Compare(p.Title, src) != 0 {
+	if strings.Compare(p.PlayUrl, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *PublishActionRequest) Field4DeepEqual(src string) bool {
+
+	if strings.Compare(p.CoverUrl, src) != 0 {
 		return false
 	}
 	return true
@@ -1731,8 +1763,8 @@ func (p *PublishActionResponse) Field1DeepEqual(src *BaseResp) bool {
 }
 
 type PublishListRequest struct {
-	UserId int64  `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	Token  string `thrift:"token,2" frugal:"2,default,string" json:"token"`
+	UserId    int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
+	NowUserId int64 `thrift:"now_user_id,2" frugal:"2,default,i64" json:"now_user_id"`
 }
 
 func NewPublishListRequest() *PublishListRequest {
@@ -1747,19 +1779,19 @@ func (p *PublishListRequest) GetUserId() (v int64) {
 	return p.UserId
 }
 
-func (p *PublishListRequest) GetToken() (v string) {
-	return p.Token
+func (p *PublishListRequest) GetNowUserId() (v int64) {
+	return p.NowUserId
 }
 func (p *PublishListRequest) SetUserId(val int64) {
 	p.UserId = val
 }
-func (p *PublishListRequest) SetToken(val string) {
-	p.Token = val
+func (p *PublishListRequest) SetNowUserId(val int64) {
+	p.NowUserId = val
 }
 
 var fieldIDToName_PublishListRequest = map[int16]string{
 	1: "user_id",
-	2: "token",
+	2: "now_user_id",
 }
 
 func (p *PublishListRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1792,7 +1824,7 @@ func (p *PublishListRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1841,10 +1873,10 @@ func (p *PublishListRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *PublishListRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.Token = v
+		p.NowUserId = v
 	}
 	return nil
 }
@@ -1900,10 +1932,10 @@ WriteFieldEndError:
 }
 
 func (p *PublishListRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("now_user_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Token); err != nil {
+	if err := oprot.WriteI64(p.NowUserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1932,7 +1964,7 @@ func (p *PublishListRequest) DeepEqual(ano *PublishListRequest) bool {
 	if !p.Field1DeepEqual(ano.UserId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Token) {
+	if !p.Field2DeepEqual(ano.NowUserId) {
 		return false
 	}
 	return true
@@ -1945,9 +1977,9 @@ func (p *PublishListRequest) Field1DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *PublishListRequest) Field2DeepEqual(src string) bool {
+func (p *PublishListRequest) Field2DeepEqual(src int64) bool {
 
-	if strings.Compare(p.Token, src) != 0 {
+	if p.NowUserId != src {
 		return false
 	}
 	return true

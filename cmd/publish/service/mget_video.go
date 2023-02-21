@@ -23,7 +23,15 @@ func (s *MGetVideoService) MGetVideo(req *publish.PublishListRequest) ([]*publis
 	if err != nil {
 		return nil, err
 	}
+	favorite_array := make([]bool, 0)
+	for i := 0; i < len(videoModels); i++ {
+		is_favorite, err := db.IsFavorite(s.ctx, req.NowUserId, int64(videoModels[i].ID))
+		if err != nil {
+			return nil, err
+		}
+		favorite_array[i] = is_favorite
+	}
 	user, err := rpc.MGetUser(s.ctx, &user.MGetUserRequest{UserId: req.UserId})
-	videos := pack.Videos(videoModels, user)
+	videos := pack.Videos(videoModels, user, favorite_array)
 	return videos, nil
 }

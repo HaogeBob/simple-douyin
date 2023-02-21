@@ -6,6 +6,8 @@ import (
 	api "github.com/simple/douyin/cmd/api/biz/handler/api"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
+	
+	
 
 /*
  This file will register all the routes of the services in the master idl.
@@ -20,16 +22,15 @@ func Register(r *server.Hertz) {
 	{
 		_douyin := root.Group("/douyin", _douyinMw()...)
 		{
-			_user := _douyin.Group("/user", _userMw()...)
-			_user.GET("/", append(_douyinusergetMw(), api.DouyinUserGet)...)
-			// {
-				_login := _douyin.Group("/user/login", _loginMw()...)
-				_login.POST("/", append(_douyinuserloginMw(), api.DouyinUserLogin)...)
-			// }
-			// {
-				_register := _douyin.Group("/user/register", _registerMw()...)
-				_register.POST("/", append(_douyinuserregisterMw(), api.DouyinUserRegister)...)
-			// }
+			_publish := _douyin.Group("/publish", _publishMw()...)
+			{
+				_action := _publish.Group("/action", _actionMw()...)
+				_action.POST("/", append(_douyinpublish_ctionMw(), api.DouyinPublishAction)...)
+			}
+			{
+				_list := _publish.Group("/list", _listMw()...)
+				_list.POST("/", append(_douyinpublishlistMw(), api.DouyinPublishList)...)
+			}
 		}
 	}
 }
