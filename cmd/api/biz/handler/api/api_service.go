@@ -4,6 +4,9 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
@@ -42,18 +45,36 @@ func DouyinPublishAction(ctx context.Context, c *app.RequestContext) {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-	path := "./static/" + file.Filename
+	pwd, err := os.Getwd()
+	path := fmt.Sprintf("%s/public/video/%d_%s", pwd, currentId, req.Title)
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
 
+	formPos := strings.LastIndex(req.Title, ".")
+	title := req.Title[:formPos]
+
+	coverName := fmt.Sprintf("%s/public/cover/%d_%s", pwd, currentId, title)
+	util.GetSnapshot(path, coverName, 1)
+
+	vName := fmt.Sprintf("%d_%s", currentId, req.Title)
+	cName := fmt.Sprintf("%d_%s", currentId, title)
+
+	playURL := "http://" + constants.FileServerAddr + "/video/" + vName
+	coverURL := "http://" + constants.FileServerAddr + "/cover/" + cName + ".png"
+
 	err = rpc.PublishAction(context.Background(), &publish.PublishActionRequest{
 		UserId:   currentId,
 		Title:    req.Title,
-		PlayUrl:  util.GetFileUrl(path),
-		CoverUrl: util.GetFileUrl(path),
+		PlayUrl:  playURL,
+		CoverUrl: coverURL,
 	})
 
 	if err != nil {

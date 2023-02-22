@@ -13,6 +13,7 @@ const (
 	FavoriteAddress    = "127.0.0.1:8084"                                                           //Favorite服务地址
 	CommentAddress     = "127.0.0.1:8085"                                                           //Comment服务地址
 	RelationAddress    = "127.0.0.1:8086"                                                           //Relation服务地址
+	FileServerAddr     = "127.0.0.1:8087"                                                           //File服务地址
 	OssEndPoint        = "oss-cn-shenzhen.aliyuncs.com"                                             //Oss
 	OssAccessKeyId     = "oss"
 	OssAccessKeySecret = "oss"
