@@ -3,8 +3,13 @@
 package main
 
 import (
+	"context"
+
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	handler "github.com/simple/douyin/cmd/api/biz/handler"
+	"github.com/simple/douyin/cmd/api/biz/handler/favorite"
+	"github.com/simple/douyin/pkg/errno"
 )
 
 // customizeRegister registers customize routers.
@@ -12,4 +17,10 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 
 	// your code ...
+	r.NoRoute(func(ctx context.Context, c *app.RequestContext) { // used for HTTP 404
+		favorite.SendResponse(c, errno.ServiceErr, nil)
+	})
+	r.NoMethod(func(ctx context.Context, c *app.RequestContext) { // used for HTTP 405
+		favorite.SendResponse(c, errno.ServiceErr, nil)
+	})
 }

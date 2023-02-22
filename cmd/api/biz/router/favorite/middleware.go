@@ -19,6 +19,7 @@ import (
 
 func rootMw() []app.HandlerFunc {
 	// your code...
+	// return nil
 	return []app.HandlerFunc{
 		// use recovery mw
 		recovery.Recovery(recovery.WithRecoveryHandler(

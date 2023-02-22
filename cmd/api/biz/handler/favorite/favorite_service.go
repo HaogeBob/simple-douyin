@@ -4,18 +4,19 @@ package favorite
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	favoriteapi "github.com/simple/douyin/cmd/api/biz/model/favorite"
 	"github.com/simple/douyin/cmd/api/biz/rpc"
 	"github.com/simple/douyin/kitex_gen/favorite"
-	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/errno"
 )
 
 // FavoriteAction .
 // @router /douyin/favorite/action/ [POST]
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
+	fmt.Println("111111111111111111")
 	var err error
 	var req favoriteapi.FavoriteActionRequest
 	err = c.BindAndValidate(&req)
@@ -23,6 +24,7 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
+	fmt.Println("api here, ready to invoke rpc")
 	err = rpc.FavoriteAction(context.Background(), &favorite.FavoriteActionRequest{
 		Token:      req.Token,
 		VideoId:    req.VideoID,
@@ -46,8 +48,10 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-	v, _ := c.Get(constants.IdentityKey)
-	videos, err := rpc.FavoriteList(context.Background(), &favorite.FavoriteListRequest{})
+	videos, err := rpc.FavoriteList(context.Background(), &favorite.FavoriteListRequest{
+		UserId: req.UserId,
+		Token:  req.Token,
+	})
 	if err != nil {
 		SendResponse(c, errno.ConvertErr(err), nil)
 		return

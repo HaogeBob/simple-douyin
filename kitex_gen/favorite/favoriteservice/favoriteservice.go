@@ -340,6 +340,7 @@ func newServiceClient(c client.Client) *kClient {
 }
 
 func (p *kClient) FavoriteAction(ctx context.Context, Req *favorite.FavoriteActionRequest) (r *favorite.FavoriteActionResponse, err error) {
+	fmt.Println("service here, ready to db")
 	var _args FavoriteActionArgs
 	_args.Req = Req
 	var _result FavoriteActionResult

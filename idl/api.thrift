@@ -36,8 +36,8 @@ struct FavoriteActionResponse {
 }
 
 struct FavoriteListRequest {
-    1: i64 user_id //用户id
-    2: string token //用户鉴权token
+    1: i64 user_id (api.query="user_id")//用户id
+    2: string token (api.query="token", api.vd="len($) > 0")//用户鉴权token
 }
 
 struct FavoriteListResponse {
