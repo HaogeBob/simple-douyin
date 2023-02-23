@@ -55,7 +55,7 @@ func (s *FollowListService) FollowList(req *relation.FollowListRequest) ([]*rela
 	for _, user := range followUsers {
 		userList = append(userList, &relation.User{
 			Id:            int64(user.ID),
-			Name:          user.Name,
+			Name:          user.Username,
 			FollowCount:   user.FollowCount,
 			FollowerCount: user.FollowerCount,
 			IsFollow:      true,

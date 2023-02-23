@@ -7,12 +7,12 @@ import (
 )
 
 // 打包成可以直接返回的评论信息
-func CommentInfo(commentRaw *db.CommentRaw, user *db.UserRaw) *comment.Comment {
+func CommentInfo(commentRaw *db.CommentRaw, user *db.User) *comment.Comment {
 	comment := &comment.Comment{
 		Id: int64(commentRaw.ID),
 		User: &comment.User{
 			Id:            int64(user.ID),
-			Name:          user.Name,
+			Name:          user.Username,
 			FollowCount:   user.FollowCount,
 			FollowerCount: user.FollowerCount,
 			IsFollow:      false,
@@ -24,13 +24,13 @@ func CommentInfo(commentRaw *db.CommentRaw, user *db.UserRaw) *comment.Comment {
 }
 
 // 获取视频的评论列表
-func CommentList(currentId int64, comments []*db.CommentRaw, userMap map[int64]*db.UserRaw, relationMap map[int64]*db.RelationRaw) []*comment.Comment {
+func CommentList(currentId int64, comments []*db.CommentRaw, userMap map[int64]*db.User, relationMap map[int64]*db.RelationRaw) []*comment.Comment {
 	commentList := make([]*comment.Comment, 0)
 	for _, commentRaw := range comments {
 		commentUser, ok := userMap[commentRaw.UserId]
 		if !ok {
-			commentUser = &db.UserRaw{
-				Name:          "未知用户",
+			commentUser = &db.User{
+				Username:      "未知用户",
 				FollowCount:   0,
 				FollowerCount: 0,
 			}
@@ -48,7 +48,7 @@ func CommentList(currentId int64, comments []*db.CommentRaw, userMap map[int64]*
 			Id: int64(commentRaw.ID),
 			User: &comment.User{
 				Id:            int64(commentUser.ID),
-				Name:          commentUser.Name,
+				Name:          commentUser.Username,
 				FollowCount:   commentUser.FollowCount,
 				FollowerCount: commentUser.FollowerCount,
 				IsFollow:      isFollow,

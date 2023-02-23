@@ -56,7 +56,7 @@ func (s *CommentListService) CommentList(req *comment.CommentListRequest) ([]*co
 	if err != nil {
 		return nil, err
 	}
-	userMap := make(map[int64]*db.UserRaw)
+	userMap := make(map[int64]*db.User)
 	for _, user := range users {
 		userMap[int64(user.ID)] = user
 	}

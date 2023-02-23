@@ -56,16 +56,16 @@ func Register(r *server.Hertz) {
 				_list1.GET("/", append(_getpublishlistMw(), api.GetPublishList)...)
 			}
 		}
-		{
-			_relation := _douyin.Group("/relation", _relationMw()...)
-			{
-				_follow := _relation.Group("/follow", _followMw()...)
-				{
-					_list2 := _follow.Group("/list", _list2Mw()...)
-					_list2.GET("/", append(_getfollowlistMw(), api.GetFollowList)...)
-				}
-			}
-		}
+		// {
+		// 	_relation := _douyin.Group("/relation", _relationMw()...)
+		// 	{
+		// 		_follow := _relation.Group("/follow", _followMw()...)
+		// 		{
+		// 			_list2 := _follow.Group("/list", _list2Mw()...)
+		// 			_list2.GET("/", append(_getfollowlistMw(), api.GetFollowList)...)
+		// 		}
+		// 	}
+		// }
 		{
 			_relation := _douyin.Group("/relation", _relationMw()...)
 			{
@@ -77,6 +77,11 @@ func Register(r *server.Hertz) {
 				{
 					_list3 := _follower.Group("/list", _list3Mw()...)
 					_list3.GET("/", append(_getfollowerlistMw(), api.GetFollowerList)...)
+				}
+				_follow := _relation.Group("/follow", _followMw()...)
+				{
+					_list2 := _follow.Group("/list", _list2Mw()...)
+					_list2.GET("/", append(_getfollowlistMw(), api.GetFollowList)...)
 				}
 			}
 		}

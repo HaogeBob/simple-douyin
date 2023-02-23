@@ -9,7 +9,7 @@ import (
 	"github.com/simple/douyin/kitex_gen/feed"
 	"github.com/simple/douyin/kitex_gen/publish"
 	"github.com/simple/douyin/kitex_gen/relation"
-	"github.com/simple/douyin/kitex_gen/user"
+	// "github.com/simple/douyin/kitex_gen/user"
 	"github.com/simple/douyin/pkg/errno"
 )
 
@@ -49,23 +49,23 @@ func publishbaseResp(err errno.ErrNo) *publish.BaseResp {
 	return &publish.BaseResp{StatusCode: err.ErrCode, StatusMessage: err.ErrMsg, ServiceTime: time.Now().Unix()}
 }
 
-func NewUserBaseResp(err error) *user.BaseResp {
-	if err == nil {
-		return userbaseResp(errno.Success)
-	}
+// func NewUserBaseResp(err error) *user.BaseResp {
+// 	if err == nil {
+// 		return userbaseResp(errno.Success)
+// 	}
 
-	e := errno.ErrNo{}
-	if errors.As(err, &e) {
-		return userbaseResp(e)
-	}
+// 	e := errno.ErrNo{}
+// 	if errors.As(err, &e) {
+// 		return userbaseResp(e)
+// 	}
 
-	s := errno.ServiceErr.WithMessage(err.Error())
-	return userbaseResp(s)
-}
+// 	s := errno.ServiceErr.WithMessage(err.Error())
+// 	return userbaseResp(s)
+// }
 
-func userbaseResp(err errno.ErrNo) *user.BaseResp {
-	return &user.BaseResp{StatusCode: err.ErrCode, StatusMessage: err.ErrMsg, ServiceTime: time.Now().Unix()}
-}
+// func userbaseResp(err errno.ErrNo) *user.BaseResp {
+// 	return &user.BaseResp{StatusCode: err.ErrCode, StatusMessage: err.ErrMsg, ServiceTime: time.Now().Unix()}
+// }
 
 func NewFavoriteBaseResp(err error) *favorite.BaseResp {
 	if err == nil {
