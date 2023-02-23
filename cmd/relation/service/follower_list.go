@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/simple/douyin/dal/db"
-	"github.com/simple/douyin/dal/pack"
+	// "github.com/simple/douyin/dal/pack"
 	"github.com/simple/douyin/kitex_gen/relation"
 	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/jwt"
@@ -42,7 +42,7 @@ func (s *FollowerListService) FollowerList(req *relation.FollowerListRequest) ([
 
 	followerIds := make([]int64, 0)
 	for _, follower := range followers {
-		followerIds = append(followerIds, follower.ToUserId)
+		followerIds = append(followerIds, follower.UserId)
 	}
 
 	followerUsers, err := db.QueryUserByIds(s.ctx, followerIds)

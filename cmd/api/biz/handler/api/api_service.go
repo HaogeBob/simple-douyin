@@ -15,15 +15,10 @@ import (
 	"github.com/simple/douyin/kitex_gen/user"
 	"github.com/simple/douyin/pkg/errno"
 
-	"context"
 	"strconv"
 	"unicode/utf8"
-
-	"github.com/gin-gonic/gin"
-	"github.com/simple/douyin/cmd/api/rpc"
 	"github.com/simple/douyin/kitex_gen/comment"
 	"github.com/simple/douyin/pkg/constants"
-	"github.com/simple/douyin/pkg/errno"
 )
 
 // Feed .

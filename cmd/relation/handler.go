@@ -38,7 +38,7 @@ func (s *RelationServiceImpl) FollowList(ctx context.Context, req *relation.Foll
 		return resp, nil
 	}
 
-	followList, err := service.NewFollwListService(ctx).FollowList(req)
+	followList, err := service.NewFollowListService(ctx).FollowList(req)
 	if err != nil {
 		resp.BaseResp = pack.NewRelationBaseResp(err)
 		resp.UserList = nil

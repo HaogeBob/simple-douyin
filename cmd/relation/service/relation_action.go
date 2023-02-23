@@ -44,13 +44,13 @@ func (s *RelationActionService) RelationAction(req *relation.RelationActionReque
 
 	// 关注、取关
 	if req.ActionType == 1 {
-		err := db.CreateRelation(s.ctx, currentId, req.ToUserId)
+		err := db.Create(s.ctx, currentId, req.ToUserId)
 		if err != nil {
 			return err
 		}
 		return nil
 	} else if req.ActionType == 2 {
-		err := db.DeleteRelation(s.ctx, currentId, req.ToUserId)
+		err := db.Delete(s.ctx, currentId, req.ToUserId)
 		if err != nil {
 			return err
 		}

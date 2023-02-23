@@ -37,7 +37,7 @@ func (*CommentServiceImpl) CreateComment(ctx context.Context, req *comment.Creat
 // Delete Comment
 func (*CommentServiceImpl) DeleteComment(ctx context.Context, req *comment.DeleteCommentRequest) (resp *comment.DeleteCommentResponse, err error) {
 	resp = new(comment.DeleteCommentResponse)
-    // 判断 token、videoid和commentid 有效
+	// 判断 token、videoid和commentid 有效
 	if len(req.Token) == 0 || req.VideoId == 0 || req.CommentId == 0 {
 		resp.BaseResp = pack.NewCommentBaseResp(errno.ParamErr)
 		resp.Comment = nil

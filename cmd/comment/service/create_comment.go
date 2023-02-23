@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"errors"
-	"sync"
+	// "sync"
 
 	"github.com/simple/douyin/dal/db"
 	"github.com/simple/douyin/dal/pack"
@@ -46,7 +46,7 @@ func (s *CreateCommentService) CreateComment(req *comment.CreateCommentRequest) 
 		Contents: req.CommentText,
 	}
 	//创建评论记录并增加视频评论数
-	err := db.CreateComment(s.ctx, commentRaw)
+	err = db.CreateComment(s.ctx, commentRaw)
 	if err != nil {
 		return nil, err
 	}

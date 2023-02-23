@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/simple/douyin/dal/db"
-	"github.com/simple/douyin/dal/pack"
+	// "github.com/simple/douyin/dal/pack"
 	"github.com/simple/douyin/kitex_gen/relation"
 	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/jwt"

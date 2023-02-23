@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"errors"
-	"sync"
+	// "sync"
 
 	"github.com/simple/douyin/dal/db"
 	"github.com/simple/douyin/dal/pack"
