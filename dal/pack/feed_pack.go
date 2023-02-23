@@ -5,9 +5,9 @@ import (
 	"github.com/simple/douyin/kitex_gen/feed"
 )
 
-func Feed_pack(video *db.Videos) (*feed.Video, error) {
+func Feed_pack(video *db.Videos) (feed.Video, error) {
 
-	var tt *feed.Video
+	var tt feed.Video
 
 	tt.Id = video.Id
 	tt.Title = video.Title

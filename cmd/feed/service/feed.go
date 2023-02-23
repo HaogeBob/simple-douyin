@@ -3,14 +3,15 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
+	"time"
 
 	"github.com/simple/douyin/dal/db"
 	pack "github.com/simple/douyin/dal/pack"
 	"github.com/simple/douyin/kitex_gen/feed"
 	"github.com/simple/douyin/pkg/constants"
-	"github.com/simple/douyin/pkg/jwt"
+	//"github.com/simple/douyin/pkg/constants"
+	//"github.com/simple/douyin/pkg/jwt"
 )
 
 type FeedService struct {
@@ -24,11 +25,11 @@ func NewFeedService(ctx context.Context) *FeedService {
 
 func (s FeedService) Feed(token string, latestTime int64) ([]*feed.Video, int64, error) {
 
-	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
+	//Jwt := jwt.NewJWT([]byte(constants.SecretKey))
+	//currentId, _ := Jwt.CheckToken(token)
 
-	currentId, _ := Jwt.CheckToken(token)
-	//currentId := int64(1)
-	fmt.Println("ID: ", currentId)
+	currentId := int64(1)
+	//fmt.Println("ID: ", currentId)
 	if currentId <= 0 {
 		return nil, 0, errors.New("token compare error")
 	}
@@ -49,22 +50,25 @@ func (s FeedService) Feed(token string, latestTime int64) ([]*feed.Video, int64,
 	user_info := feed.User{Id: user.Id, FollowCount: user.Follow_count,
 		FollowerCount: user.Follower_count, IsFollow: user.Is_follow}
 
-	var time = int64(math.MaxInt64)
+	la_time := time.Unix(math.MaxInt64, 0).Format(constants.TimeFormat)
+	ee_time := time.Unix(latestTime, 0).Format(constants.TimeFormat)
 
 	for i := 0; i < len(videos); i++ {
-
 		tp, err := pack.Feed_pack(videos[i])
 		if err != nil {
 			return nil, 0, err
 		}
+
 		tp.Author = &user_info
 
-		if videos[i].Release_time < time {
-			time = videos[i].Release_time
+		if videos[i].Release_time >= ee_time && videos[i].Release_time < la_time {
+			la_time = videos[i].Release_time
 		}
 
-		req = append(req, tp)
-	}
+		req = append(req, &tp)
 
-	return req, time, nil
+	}
+	//fmt.Println(la_time)
+	rp_t, err := time.ParseInLocation(constants.TimeFormat, la_time, time.Local)
+	return req, rp_t.Unix(), nil
 }

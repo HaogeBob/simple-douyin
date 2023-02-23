@@ -91,5 +91,5 @@ service ApiService {
     douyin_user_login_response DouyinUserLogin(1: douyin_user_login_request req) (api.post="/douyin/user/login/")
     douyin_user_response DouyinUserGet(1: douyin_user_request req) (api.get="/douyin/user/")
 
-    fouyin_feed_response Feed (1: douyin_feed_request req) (api.get="/douyin/feed/") // 是这样写的嘛？
+    fouyin_feed_response Feed (1: douyin_feed_request req) (api.get="/douyin/feed/") 
 }

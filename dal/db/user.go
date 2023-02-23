@@ -55,9 +55,12 @@ func (u *User_info) TableName() string {
 func Query_user_info(ctx context.Context, userid int64) (User_info, error) {
 
 	var res User_info
-	if err := DB.WithContext(ctx).Where("id == ?", userid).Find(&res).Error; err != nil {
+
+	if err := DB.WithContext(ctx).Where("id = ?", userid).Find(&res).Error; err != nil {
+
 		return res, err
 	}
+
 	return res, nil
 
 }
