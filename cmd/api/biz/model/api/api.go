@@ -15,8 +15,8 @@ import (
 //
 // 用户注册接口
 type DouyinUserRegisterRequest struct {
-	Username string `thrift:"username,1" form:"username" json:"username" vd:"len($) > 0"`
-	Password string `thrift:"password,2" form:"password" json:"password" vd:"len($) > 0"`
+	Username string `thrift:"username,1" query:"username" json:"username" vd:"len($) > 0"`
+	Password string `thrift:"password,2" query:"password" json:"password" vd:"len($) > 0"`
 }
 
 func NewDouyinUserRegisterRequest() *DouyinUserRegisterRequest {
@@ -474,8 +474,8 @@ func (p *DouyinUserRegisterResponse) String() string {
 
 // 用户登录接口
 type DouyinUserLoginRequest struct {
-	Username string `thrift:"username,1" form:"username" json:"username" vd:"len($) > 0"`
-	Password string `thrift:"password,2" form:"password" json:"password" vd:"len($) > 0"`
+	Username string `thrift:"username,1" query:"username" json:"username" vd:"len($) > 0"`
+	Password string `thrift:"password,2" query:"password" json:"password" vd:"len($) > 0"`
 }
 
 func NewDouyinUserLoginRequest() *DouyinUserLoginRequest {

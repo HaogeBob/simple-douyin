@@ -53,12 +53,10 @@ func DouyinUserGet(ctx context.Context, c *app.RequestContext) {
 		SendResponse(c, errno.ConvertErr(err), "binding err")
 		return
 	}
-	// fmt.Println(req.UserID)
 	// v, _ := c.Get(constants.IdentityKey)
-	// fmt.Println(v)
 	user, err := rpc.MGetUser(context.Background(), &user.MGetUserRequest{
 		UserId: req.UserID,
-		// UserId: 4,
+		// UserId: v.(*api.User).ID,
 	})
 	if err != nil {
 		SendResponse(c, errno.ConvertErr(err), "return err")
