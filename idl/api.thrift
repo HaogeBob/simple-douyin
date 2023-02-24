@@ -1,14 +1,9 @@
-namespace go api
-
-// struct BaseResp {
-//     1: i64 status_code
-//     2: string status_msg
-// }
+namespace go github.com/simple/douyin/cmd/api
 
 // 用户注册接口
 struct douyin_user_register_request {
-    1: string username (api.form="username", api.vd="len($) > 0")
-    2: string password (api.form="password", api.vd="len($) > 0")
+    1: string username (api.query="username", api.vd="len($) > 0")
+    2: string password (api.query="password", api.vd="len($) > 0")
 }
 
 struct douyin_user_register_response {
@@ -20,8 +15,8 @@ struct douyin_user_register_response {
 
 // 用户登录接口
 struct douyin_user_login_request {
-    1: string username (api.form="username", api.vd="len($) > 0")
-    2: string password (api.form="password", api.vd="len($) > 0")
+    1: string username (api.query="username", api.vd="len($) > 0")
+    2: string password (api.query="password", api.vd="len($) > 0")
 }
 
 struct douyin_user_login_response {
