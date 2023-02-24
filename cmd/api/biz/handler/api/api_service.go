@@ -228,7 +228,7 @@ func GetFollowList(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, utils.H{
 		"status_code": Err.ErrCode,
 		"status_msg":  Err.ErrMsg,
-		"userlist":    userList,
+		"user_list":   userList,
 	})
 }
 
@@ -253,7 +253,7 @@ func GetFollowerList(ctx context.Context, c *app.RequestContext) {
 	c.JSON(http.StatusOK, utils.H{
 		"status_code": Err.ErrCode,
 		"status_msg":  Err.ErrMsg,
-		"userlist":    userList,
+		"user_list":   userList,
 	})
 
 }
