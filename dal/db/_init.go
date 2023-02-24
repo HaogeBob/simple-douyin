@@ -14,7 +14,7 @@ import (
 var DB *gorm.DB
 
 // Init init DB
-func Init() {
+func _Init() {
 	var err error
 	gormlogrus := logger.New(
 		logrus.NewWriter(),

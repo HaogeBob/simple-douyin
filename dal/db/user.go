@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	gorm.Model
-	Username      string `gorm:"column:name;index:idx_username,unique;type:varchar(32);not null"`
+	Username      string `gorm:"column:username;index:idx_username,unique;type:varchar(32);not null"`
 	Password      string `gorm:"column:password;type:varchar(32);not null"`
 	FollowCount   int64  `gorm:"column:follow_count;default:0"`
 	FollowerCount int64  `gorm:"column:follower_count;default:0"`
