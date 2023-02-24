@@ -11,7 +11,7 @@ func User(u *db.User) *user.User {
 		return nil
 	}
 
-	return &user.User{Id: int64(u.ID), Name: u.Username}
+	return &user.User{Id: int64(u.ID), Name: u.Username, FollowCount: u.FollowCount, FollowerCount: u.FollowerCount}
 }
 
 // Users pack list of user info
