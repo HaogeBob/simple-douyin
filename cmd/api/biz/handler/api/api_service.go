@@ -16,6 +16,8 @@ import (
 	"github.com/simple/douyin/kitex_gen/user"
 	"github.com/simple/douyin/pkg/constants"
 	"github.com/simple/douyin/pkg/errno"
+	"github.com/simple/douyin/kitex_gen/comment"
+	"unicode/utf8"
 )
 
 // DouyinUserRegister .
@@ -159,13 +161,45 @@ func Comment(ctx context.Context, c *app.RequestContext) {
 	var req api.DouyinCommentActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), "binding err")
 		return
 	}
+	if req.ActionType == constants.AddComment {
+		if len := utf8.RuneCountInString(req.CommentText); len > 20 {
+			SendResponse(c, errno.CommentTextErr, "comment text too long")
+			return
+		}
 
-	resp := new(api.DouyinCommentActionResponse)
+		request := &comment.CreateCommentRequest{Token: req.Token, VideoId: req.VideoID, CommentText: req.CommentText}
+		comment, err := rpc.CreateComment(context.Background(), request)
+		if err != nil {
+			SendResponse(c, errno.ConvertErr(err), "return err")
+			return
+		}
+		Err := errno.ConvertErr(errno.Success)
+		c.JSON(http.StatusOK, utils.H{
+			"status_code": Err.ErrCode,
+			"status_msg":  Err.ErrMsg,
+			"comment":     comment,
+		})
 
-	c.JSON(consts.StatusOK, resp)
+	} else if req.ActionType == constants.DelComment {
+		request := &comment.DeleteCommentRequest{Token: req.Token, VideoId: req.VideoID, CommentId: req.CommentID}
+		comment, err := rpc.DeleteComment(context.Background(), request)
+		if err != nil {
+			SendResponse(c, errno.ConvertErr(err), "return err")
+			return
+		}
+		Err := errno.ConvertErr(errno.Success)
+		c.JSON(http.StatusOK, utils.H{
+			"status_code": Err.ErrCode,
+			"status_msg":  Err.ErrMsg,
+			"comment":     comment,
+		})
+
+	} else {
+		SendResponse(c, errno.ParamErr, "action_type err")
+	}
 }
 
 // GetCommentList .
@@ -175,13 +209,21 @@ func GetCommentList(ctx context.Context, c *app.RequestContext) {
 	var req api.DouyinCommentListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		SendResponse(c, errno.ConvertErr(err), "binding err")
 		return
 	}
-
-	resp := new(api.DouyinCommentListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	request := &comment.CommentListRequest{Token: req.Token, VideoId: req.VideoID}
+	commentList, err := rpc.CommentList(context.Background(), request)
+	if err != nil {
+		SendResponse(c, errno.ConvertErr(err), "return err")
+		return
+	}
+	Err := errno.ConvertErr(errno.Success)
+	c.JSON(http.StatusOK, utils.H{
+		"status_code": Err.ErrCode,
+		"status_msg":  Err.ErrMsg,
+		"comment_list": commentList,
+	})
 }
 
 // Subscribe .

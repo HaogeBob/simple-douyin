@@ -20,12 +20,12 @@ func NewFollowerListService(ctx context.Context) *FollowerListService {
 }
 
 func (s *FollowerListService) FollowerList(req *relation.FollowerListRequest) ([]*relation.User, error) {
-	Jwt := jwt.NewJWT([]byte(constants.SecretKey))
-	currentId, _ := Jwt.CheckToken(req.Token)
+	// Jwt := jwt.NewJWT([]byte(constants.SecretKey))
+	// currentId, _ := Jwt.CheckToken(req.Token)
 
-	if currentId != req.UserId {
-		return nil, errors.New("Token compare error")
-	}
+	// if currentId != req.UserId {
+	// 	return nil, errors.New("Token compare error")
+	// }
 	// 检查当前用户是否存在
 	users, err := db.QueryUserByIds(s.ctx, []int64{req.UserId})
 	if err != nil {
